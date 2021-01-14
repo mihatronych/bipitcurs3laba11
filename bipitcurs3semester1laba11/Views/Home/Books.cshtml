@@ -43,7 +43,7 @@
         // получаем значения для добавляемой книги
         var book = {
             b_name: $('#addName').val(),
-            b_author: $('#addPassport').val(),
+            b_author: $('#addAuthor').val(),
             b_born: $('#addBorn').val(),
             b_publ: $('#addPubl').val()
         };
@@ -65,7 +65,7 @@
     function DeleteBook(id) {
 
         $.ajax({
-            url: '/api/DeleteBook/' + id,
+            url: '/api/DeleteBook?id=' + id,
             type: 'DELETE',
             contentType: "application/json;charset=utf-8",
             success: function (data) {
@@ -84,8 +84,8 @@
             var born = new Date(book.b_born);
             var publ = new Date(book.b_publ);
             strResult += "<tr><td>" + book.b_id + "</td><td> " + book.b_name + "</td><td>" + book.b_author + "</td><td>"
-                + born.getUTCDay()+"-"+ born.getUTCMonth()+"-"+ born.getFullYear() +"</td><td>"
-                + publ.getUTCDay()+"-"+ publ.getUTCMonth()+"-"+ publ.getFullYear() +
+                + born.getDate()+"-"+ (born.getMonth()+1)+"-"+ born.getFullYear() +"</td><td>"
+                + publ.getDate()+"-"+ (publ.getMonth()+1)+"-"+ publ.getFullYear() +
             "</td><td><a id='delItem' data-item='" + book.b_id + "' onclick='DeleteItem(this);' >Удалить</a></td></tr>";
         });
         strResult += "</table>";
@@ -96,7 +96,7 @@
     function DeleteItem(el) {
         // получаем id удаляемого объекта
         var id = $(el).attr('data-item');
-        DeleteReader(id);
+        DeleteBook(id);
     }
     </script>
 }

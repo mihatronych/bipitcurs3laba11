@@ -58,26 +58,29 @@ namespace bipitcurs3semester1laba11.Controllers
             return journal.Readers;
         }
 
-        [Route("~/api/CreatetOutput")]
+        [Route("~/api/CreateOutput")]
         [HttpPost]
         public void CreateOutput([FromBody] Outputs output)
         {
+            output.o_id = journal.Outputs.Count() + 1;
             journal.Outputs.Add(output);
             journal.SaveChanges();
         }
 
-        [Route("~/api/CreatetBook")]
+        [Route("~/api/CreateBook")]
         [HttpPost]
         public void CreateBook([FromBody] Books book)
         {
+            book.b_id = journal.Books.Count() + 1;
             journal.Books.Add(book);
             journal.SaveChanges();
         }
 
-        [Route("~/api/CreatetReader")]
+        [Route("~/api/CreateReader")]
         [HttpPost]
         public void CreateReader([FromBody] Readers reader)
         {
+            reader.r_id = journal.Readers.Count() + 1;
             journal.Readers.Add(reader);
             journal.SaveChanges();
         }
@@ -99,11 +102,11 @@ namespace bipitcurs3semester1laba11.Controllers
         [HttpDelete]
         public void DeleteReader(int id)
         {
-            Outputs outputs = new Outputs { o_id = id };
-            var res = journal.Outputs.FirstOrDefault(o => o.o_id == id);
+            Readers reader = new Readers { r_id = id };
+            var res = journal.Readers.FirstOrDefault(r => r.r_id == id);
             if (res != null)
             {
-                journal.Outputs.Remove(res);
+                journal.Readers.Remove(res);
                 journal.SaveChanges();
             }
         }
@@ -112,11 +115,11 @@ namespace bipitcurs3semester1laba11.Controllers
         [HttpDelete]
         public void DeleteBook(int id)
         {
-            Outputs outputs = new Outputs { o_id = id };
-            var res = journal.Outputs.FirstOrDefault(o => o.o_id == id);
+            Books books = new Books { b_id = id };
+            var res = journal.Books.FirstOrDefault(b => b.b_id == id);
             if (res != null)
             {
-                journal.Outputs.Remove(res);
+                journal.Books.Remove(res);
                 journal.SaveChanges();
             }
         }

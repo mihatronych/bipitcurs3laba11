@@ -43,7 +43,7 @@
         var reader = {
             r_fio: $('#addFIO').val(),
             r_passport: $('#addPassport').val(),
-            r_dt_bitrh: $('#addBorn').val()
+            r_dt_birth: $('#addBorn').val()
         };
 
         $.ajax({
@@ -63,7 +63,7 @@
     function DeleteReader(id) {
 
         $.ajax({
-            url: '/api/DeleteReader/' + id,
+            url: '/api/DeleteReader?id=' + id,
             type: 'DELETE',
             contentType: "application/json;charset=utf-8",
             success: function (data) {
@@ -81,8 +81,8 @@
         $.each(readers, function (index, reader) {
             var born = new Date(reader.r_dt_birth);
             strResult += "<tr><td>" + reader.r_id + "</td><td> " + reader.r_fio + "</td><td>" + reader.r_passport + "</td><td>"
-                + born.getUTCDay()+"-"+ born.getUTCMonth()+"-"+ born.getFullYear()+"</td>" +
-            "</td><td><a id='delItem' data-item='" + readers.r_id + "' onclick='DeleteItem(this);' >Удалить</a></td></tr>";
+                + born.getDate()+"-"+ (born.getMonth()+1)+"-"+ born.getFullYear()+"</td>" +
+            "</td><td><a id='delItem' data-item='" + reader.r_id + "' onclick='DeleteItem(this);' >Удалить</a></td></tr>";
         });
         strResult += "</table>";
         $("#tableBlock").html(strResult);

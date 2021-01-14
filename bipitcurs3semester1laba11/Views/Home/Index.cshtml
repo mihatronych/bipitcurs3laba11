@@ -46,8 +46,8 @@
         var output = {
             R_id: $('#selectReader').val(),
             B_id: $('#selectBook').val(),
-            o_out: $('#addOut').val(),
-            o_in: $('#addIn').val()
+            o_dt_out: $('#addOut').val(),
+            o_dt_in: $('#addIn').val()
         };
 
         $.ajax({
@@ -67,7 +67,7 @@
     function DeleteOutput(id) {
 
         $.ajax({
-            url: '/api/DeleteOutput/' + id,
+            url: '/api/DeleteOutput?id=' + id,
             type: 'DELETE',
             contentType: "application/json;charset=utf-8",
             success: function (data) {
@@ -86,8 +86,8 @@
             var out = new Date(output.o_dt_out);
             var inn = new Date(output.o_dt_in);
             strResult += "<tr><td>" + output.o_id + "</td><td> " + output.R_id + "</td><td>" +
-                output.B_id + "</td><td>" + out.getUTCDay() + "-" + out.getUTCMonth() + "-" + out.getFullYear() + "</td>" +
-                "</td>" + "<td>" + inn.getUTCDay() + "-" + inn.getUTCMonth() + "-" + inn.getFullYear() + "</td>" +
+                output.B_id + "</td><td>" + out.getDate() + "-" + (out.getMonth()+1) + "-" + out.getFullYear() + "</td>" +
+                "</td>" + "<td>" + inn.getDate() + "-" + (inn.getMonth()+1) + "-" + inn.getFullYear() + "</td>" +
             "<td><a id='delItem' data-item='" + output.o_id + "' onclick='DeleteItem(this);' >Удалить</a></td></tr>";
         });
         strResult += "</table>";
@@ -104,13 +104,13 @@
                 $.each(array, function (key, value) {
                     var born = new Date(value.b_born);
             var publ = new Date(value.b_publ);
-                $('#selectBook').append('<option value="' + value.b_id + '">' + value.b_name + ' ' + value.b_author + ' ' + born.getUTCDay() + "-" + born.getUTCMonth() + "-" + born.getFullYear()  +' ' + publ.getUTCDay() + "-" + publ.getUTCMonth() + "-" + publ.getFullYear()  + '</option>');
+                $('#selectBook').append('<option value="' + value.b_id + '">' + value.b_name + ' ' + value.b_author + ' ' + born.getDate() + "-" + (born.getMonth()+1 )+ "-" + born.getFullYear()  +' ' + publ.getDate() + "-" + (publ.getMonth()+1) + "-" + publ.getFullYear()  + '</option>');
             });
         }
         function CreateSelectReaders(array) {
             $.each(array, function (key, value) {
                 var born = new Date(value.r_dt_birth);
-                $('#selectReader').append('<option value="' + value.r_id + '">' + value.r_fio + ' ' + value.r_passport + ' ' + born.getUTCDay() + "-" + born.getUTCMonth() + "-" + born.getFullYear()  + '</option>');
+                $('#selectReader').append('<option value="' + value.r_id + '">' + value.r_fio + ' ' + value.r_passport + ' ' + born.getDate() + "-" + (born.getMonth()+1) + "-" + born.getFullYear()  + '</option>');
             });
         }
         function GetAllReaders() {
