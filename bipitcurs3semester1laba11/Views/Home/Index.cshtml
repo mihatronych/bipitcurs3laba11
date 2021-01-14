@@ -1,0 +1,143 @@
+﻿<div id="tableBlock"></div>
+
+<div id="createBlock">
+    <p><b>Добавление выдачи</b></p>
+    <table>
+        <tr><td><label>ID читателя: </label></td><td><select id="selectReader" /></td></tr>
+        <tr><td><label>ID книги: </label></td><td><select id="selectBook" /></td></tr>
+        <tr><td><label>Дата выдачи: </label></td><td><input type="date" id="addOut" /></td></tr>
+        <tr><td><label>Дата просрочки: </label></td><td><input type="date" id="addIn" /></td></tr>
+    </table>
+    <button id="addOutput">Сохранить</button>
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+    $(document).ready(function () {
+        GetAllOutputs();
+        GetAllReaders();
+        GetAllBooks();
+
+        $("#addOutput").click(function (event) {
+            event.preventDefault();
+            AddOutput();
+        });
+
+    });
+    // Получение всех книг по ajax-запросу
+    function GetAllOutputs() {
+
+        $("#createBlock").css('display', 'block');
+        $.ajax({
+            url: '/api/GetOutputs',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                WriteResponse(data);
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
+        });
+    }
+ // Добавление новой книги
+    function AddOutput() {
+        // получаем значения для добавляемой книги
+        var output = {
+            R_id: $('#selectReader').val(),
+            B_id: $('#selectBook').val(),
+            o_out: $('#addOut').val(),
+            o_in: $('#addIn').val()
+        };
+
+        $.ajax({
+            url: '/api/CreateOutput/',
+            type: 'POST',
+            data: JSON.stringify(output),
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                GetAllOutputs();
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
+        });
+    }
+ // Удаление книги
+    function DeleteOutput(id) {
+
+        $.ajax({
+            url: '/api/DeleteOutput/' + id,
+            type: 'DELETE',
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                GetAllOutputs();
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
+        });
+    }
+
+ // вывод полученных данных на экран
+    function WriteResponse(outputs) {
+        var strResult = "<table><th>ID</th><th>ID читателя</th><th>ID книги</th><th>Дата выдачи</th><th>Дата просрочки</th>";
+        $.each(outputs, function (index, output) {
+            var out = new Date(output.o_dt_out);
+            var inn = new Date(output.o_dt_in);
+            strResult += "<tr><td>" + output.o_id + "</td><td> " + output.R_id + "</td><td>" +
+                output.B_id + "</td><td>" + out.getUTCDay() + "-" + out.getUTCMonth() + "-" + out.getFullYear() + "</td>" +
+                "</td>" + "<td>" + inn.getUTCDay() + "-" + inn.getUTCMonth() + "-" + inn.getFullYear() + "</td>" +
+            "<td><a id='delItem' data-item='" + output.o_id + "' onclick='DeleteItem(this);' >Удалить</a></td></tr>";
+        });
+        strResult += "</table>";
+        $("#tableBlock").html(strResult);
+
+    }
+    // обработчик удаления
+    function DeleteItem(el) {
+        // получаем id удаляемого объекта
+        var id = $(el).attr('data-item');
+        DeleteOutput(id);
+    }
+            function CreateSelectBooks(array) {
+                $.each(array, function (key, value) {
+                    var born = new Date(value.b_born);
+            var publ = new Date(value.b_publ);
+                $('#selectBook').append('<option value="' + value.b_id + '">' + value.b_name + ' ' + value.b_author + ' ' + born.getUTCDay() + "-" + born.getUTCMonth() + "-" + born.getFullYear()  +' ' + publ.getUTCDay() + "-" + publ.getUTCMonth() + "-" + publ.getFullYear()  + '</option>');
+            });
+        }
+        function CreateSelectReaders(array) {
+            $.each(array, function (key, value) {
+                var born = new Date(value.r_dt_birth);
+                $('#selectReader').append('<option value="' + value.r_id + '">' + value.r_fio + ' ' + value.r_passport + ' ' + born.getUTCDay() + "-" + born.getUTCMonth() + "-" + born.getFullYear()  + '</option>');
+            });
+        }
+        function GetAllReaders() {
+            $.ajax({
+                url: '/api/GetReaders',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    CreateSelectReaders(data);
+                },
+                error: function (x, y, z) {
+                    alert(x + '\n' + y + '\n' + z);
+                }
+            });
+        }
+        function GetAllBooks() {
+            $.ajax({
+                url: '/api/GetBooks',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    CreateSelectBooks(data);
+                },
+                error: function (x, y, z) {
+                    alert(x + '\n' + y + '\n' + z);
+                }
+            });
+        }
+    </script>
+}

@@ -1,0 +1,99 @@
+﻿<div id="tableBlock"></div>
+
+<div id="createBlock">
+    <p><b>Добавление читателя</b></p>
+    <table>
+        <tr><td><label>ФИО: </label></td><td><input type="text" id="addFIO" /></td></tr>
+        <tr><td><label>Паспорт: </label></td><td><input type="text" id="addPassport" /></td></tr>
+        <tr><td><label>Дата рождения: </label></td><td><input type="date" id="addBorn" /></td></tr>
+    </table>
+    <button id="addReader">Сохранить</button>
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+    $(document).ready(function () {
+        GetAllReaders();
+
+        $("#addReader").click(function (event) {
+            event.preventDefault();
+            AddReader();
+        });
+
+    });
+    // Получение всех книг по ajax-запросу
+    function GetAllReaders() {
+
+        $("#createBlock").css('display', 'block');
+        $.ajax({
+            url: '/api/GetReaders',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                WriteResponse(data);
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
+        });
+    }
+ // Добавление новой книги
+    function AddReader() {
+        // получаем значения для добавляемой книги
+        var reader = {
+            r_fio: $('#addFIO').val(),
+            r_passport: $('#addPassport').val(),
+            r_dt_bitrh: $('#addBorn').val()
+        };
+
+        $.ajax({
+            url: '/api/CreateReader/',
+            type: 'POST',
+            data: JSON.stringify(reader),
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                GetAllReaders();
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
+        });
+    }
+ // Удаление книги
+    function DeleteReader(id) {
+
+        $.ajax({
+            url: '/api/DeleteReader/' + id,
+            type: 'DELETE',
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                GetAllReaders();
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
+        });
+    }
+
+ // вывод полученных данных на экран
+    function WriteResponse(readers) {
+        var strResult = "<table><th>ID</th><th>ФИО</th><th>Паспорт</th><th>Дата рождения</th>";
+        $.each(readers, function (index, reader) {
+            var born = new Date(reader.r_dt_birth);
+            strResult += "<tr><td>" + reader.r_id + "</td><td> " + reader.r_fio + "</td><td>" + reader.r_passport + "</td><td>"
+                + born.getUTCDay()+"-"+ born.getUTCMonth()+"-"+ born.getFullYear()+"</td>" +
+            "</td><td><a id='delItem' data-item='" + readers.r_id + "' onclick='DeleteItem(this);' >Удалить</a></td></tr>";
+        });
+        strResult += "</table>";
+        $("#tableBlock").html(strResult);
+
+    }
+    // обработчик удаления
+    function DeleteItem(el) {
+        // получаем id удаляемого объекта
+        var id = $(el).attr('data-item');
+        DeleteReader(id);
+    }
+    </script>
+}
+
